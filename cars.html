@@ -34,6 +34,20 @@
 		$(function() {
 			var driverFirstTime = true;
 
+			jQuery.fn.extend({
+				multipagemodal: function() {
+					$(this).fadeOut(function() {
+						var incPageNum = parseInt($(this).attr("data-pageNum")) + 1;
+						$(this).text($('[data-pageNum = "' + incPageNum + '"]').html()).fadeIn();
+						$(this).attr('data-pageNum', incPageNum);
+						if (!($('[data-pageNum="' + (parseInt($(this).attr("data-pageNum")) + 1) + '"]').length)) {
+								console.log('last page!');
+								$('#nextButton').button('disable');
+						};
+					});
+				}
+			});
+
 			$('#showAll').on('click', function() {
 				$.post('initialPull.php', {backup: false, driver: false}, function(response) {
 					$('#result').html(response);
@@ -98,15 +112,16 @@
 									primary: 'ui-icon-key',
 								},
 								click: function() {
-									$(this).fadeOut(function() {
-										var incPageNum = parseInt($(this).attr("data-pageNum")) + 1;
-										$(this).text($('[data-pageNum = "' + incPageNum + '"]').html()).fadeIn();
-										$(this).attr('data-pageNum', incPageNum);
-										if (!($('[data-pageNum="' + (parseInt($(this).attr("data-pageNum")) + 1) + '"]').length)) {
-												console.log('last page!');
-												$('#nextButton').button('disable');
-										};
-									});
+									$(this).multipagemodal();
+									// $(this).fadeOut(function() {
+									// 	var incPageNum = parseInt($(this).attr("data-pageNum")) + 1;
+									// 	$(this).text($('[data-pageNum = "' + incPageNum + '"]').html()).fadeIn();
+									// 	$(this).attr('data-pageNum', incPageNum);
+									// 	if (!($('[data-pageNum="' + (parseInt($(this).attr("data-pageNum")) + 1) + '"]').length)) {
+									// 			console.log('last page!');
+									// 			$('#nextButton').button('disable');
+									// 	};
+									// });
 								}
 							}
 						]
