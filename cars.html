@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Cars</title>
+	<style type="text/css">
+
+		td, tr {
+			padding: 5%;
+			margin: 10%;
+		}
+
+		input {
+			margin: 2%;
+		}
+
+		button {
+			margin-top: 4px;
+		}
+
+		.ui-dialog-titlebar-close {
+   			visibility: hidden;
+		}
+
+		.dialogdiv {
+			display: none;
+		}
+
+	</style>
+	<script type="text/javascript" src="jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="jquery-ui.js"></script>
+	<link rel="stylesheet" type="text/css" href="jquery-ui.css">
+	<script type="text/javascript">
+		$(function() {
+			var driverFirstTime = true;
+
+			$('#showAll').on('click', function() {
+				$.post('initialPull.php', {backup: false, driver: false}, function(response) {
+					$('#result').html(response);
+				});
+			});
+
+			$('#showAllBackup').on('click', function() {
+				$.post('initialPull.php', {backup: true, driver: false}, function(response) {
+					$('#result').html(response);
+				});
+			});
+
+			$('#clearDB').on('click', function() {
+				$.post('clearcarsdb.php', function(response) {
+					console.log(response);
+				})
+			});
+
+			$('#postToDB').on('click', function() {
+				var manufacturer = $('[name="manufacturer"]').val();
+				var model = $('[name="model"]').val();
+				var driver = $('#driver').val();
+				$.post('dbPost.php', {mod: model, man: manufacturer, driv: driver}, function(response) {
+					console.log(response);
+				})
+			});
+
+			$('#driverSearch').on('click', function() {
+				var manufacturer = $('[name="manufacturer"]').val();
+				var model = $('[name="model"]').val();
+				var driver = $('#driver').val();
+				if (driver === '') {
+					driver = false;
+				}
+				$.post('initialPull.php', {backup: true, driver: driver}, function(response) {
+					$('#result').html(response);
+				});
+			});
+
+			$('#searchByDriver').on('click', function() {
+				if (driverFirstTime) {
+					$('#hiddenDiv').show();
+					driverFirstTime = false;
+					$('#dialogmsg').dialog({
+						modal: true,
+						resizable: false,
+						show: {effect: 'fade', duration: '800'},
+						buttons: [
+							{
+								text: 'Got it!',
+								icons: {
+									primary: 'ui-icon-check',
+								},
+								click: function() {
+									$(this).dialog('close');
+								}
+							},
+							{
+								text: 'Next page',
+								id: 'nextButton',
+								icons: {
+									primary: 'ui-icon-key',
+								},
+								click: function() {
+									$(this).fadeOut(function() {
+										var incPageNum = parseInt($(this).attr("data-pageNum")) + 1;
+										$(this).text($('[data-pageNum = "' + incPageNum + '"]').html()).fadeIn();
+										$(this).attr('data-pageNum', incPageNum);
+										if (!($('[data-pageNum="' + (parseInt($(this).attr("data-pageNum")) + 1) + '"]').length)) {
+												console.log('last page!');
+												$('#nextButton').button('disable');
+										};
+									});
+								}
+							}
+						]
+					});
+				}
+				else if ($('#hiddenDiv').is(':hidden')) {
+					$('#hiddenDiv').show();
+				}
+				else {
+					$('#hiddenDiv').hide();
+				}
+			});
+
+			$('#hideThis').on('click', function() {
+				$('#hiddenDiv').hide();
+			});
+		})
+	</script>
+</head>
+<body>
+<a href="#end">Go to the end</a><br>
+<button type="button" id="showAll">Show all cars</button><br>
+<button type="button" id="showAllBackup">Show all cars (from backup)</button>
+<form>
+	Manufacturer: <input type="text" name="manufacturer"><br>
+	Model: <input type="text" name="model"><br>
+	<button type="button" id="postToDB">Add to DB</button>
+	<button type="button" id="searchByDriver">Search by driver</button>
+</form>
+<div id="hiddenDiv" hidden="true">
+Enter the driver name: <input type="text" id="driver">
+<button type="button" id="driverSearch">Go</button>
+<button type="button" id="hideThis">Hide</button>
+</div>
+<br>
+<br>
+<div id="result"></div><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+	<a name="end">This is the end</a><br>
+	<button type="button" id="clearDB">Clear DB (will be backed up)</button>
+	<a href="#top">Back to the top!</a>
+	<div id="dialogmsg" data-pageNum="1" title="Driver search" class="dialogdiv">
+		Here, you can search the name of a driver and see all the cars they drive.
+	</div>
+	<div data-pageNum="2" class="dialogdiv">When you click search after entering some text in the driver field, this script will make a call to a PHP script, looking in the database for cars with the driver you type.</div>
+	<div data-pageNum="3" class="dialogdiv">The contents will then be returned to you on this page, formatted in a table</div>
+	<div id=></div>
+</body>
+</html>
