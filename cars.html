@@ -14,8 +14,12 @@
 			margin: 2%;
 		}
 
-		button {
-			margin-top: 4px;
+		.normalButton {
+			margin: 10px;
+			background-color: LightSteelBlue;
+			border: 2px solid grey;
+			color: white;
+			padding: 15px 32px;
 		}
 
 		.ui-dialog-titlebar-close {
@@ -26,6 +30,31 @@
 			display: none;
 		}
 
+		body {
+			background: #222222;
+  			background: -webkit-linear-gradient(left, #222222, #888888);
+  			background: -o-linear-gradient(left, #222222, #888888);
+  			background: -moz-linear-gradient(left, #222222, #888888);
+			background: linear-gradient(to left, #222222, #888888);
+			color: white;
+			font-size: 16pt;
+		}
+
+		a {
+			color: white;
+			border: 1px solid white;
+			padding: 2px 4px;
+		}
+
+		button {
+			margin-top: 4px;
+			font-size: inherit;
+		}
+
+		.dialogdiv {
+			font-size: 12pt
+		}
+
 	</style>
 	<script type="text/javascript" src="jquery-3.2.1.min.js"></script>
 	<script type="text/javascript" src="jquery-ui.js"></script>
@@ -34,15 +63,15 @@
 		$(function() {
 			var driverFirstTime = true;
 
-			jQuery.fn.extend({
+			$.fn.extend({
 				multipagemodal: function() {
 					$(this).fadeOut(function() {
 						var incPageNum = parseInt($(this).attr("data-pageNum")) + 1;
 						$(this).text($('[data-pageNum = "' + incPageNum + '"]').html()).fadeIn();
 						$(this).attr('data-pageNum', incPageNum);
 						if (!($('[data-pageNum="' + (parseInt($(this).attr("data-pageNum")) + 1) + '"]').length)) {
-								console.log('last page!');
-								$('#nextButton').button('disable');
+							console.log('last page!');
+							$('#nextButton').button('disable');
 						};
 					});
 				}
@@ -94,8 +123,19 @@
 					$('#dialogmsg').dialog({
 						modal: true,
 						resizable: false,
+						minWidth: 400,
 						show: {effect: 'fade', duration: '800'},
 						buttons: [
+							{
+								text: 'Next page',
+								id: 'nextButton',
+								icons: {
+									primary: 'ui-icon-key',
+								},
+								click: function() {
+									$(this).multipagemodal();
+								}
+							},
 							{
 								text: 'Got it!',
 								icons: {
@@ -105,27 +145,8 @@
 									$(this).dialog('close');
 								}
 							},
-							{
-								text: 'Next page',
-								id: 'nextButton',
-								icons: {
-									primary: 'ui-icon-key',
-								},
-								click: function() {
-									$(this).multipagemodal();
-									// $(this).fadeOut(function() {
-									// 	var incPageNum = parseInt($(this).attr("data-pageNum")) + 1;
-									// 	$(this).text($('[data-pageNum = "' + incPageNum + '"]').html()).fadeIn();
-									// 	$(this).attr('data-pageNum', incPageNum);
-									// 	if (!($('[data-pageNum="' + (parseInt($(this).attr("data-pageNum")) + 1) + '"]').length)) {
-									// 			console.log('last page!');
-									// 			$('#nextButton').button('disable');
-									// 	};
-									// });
-								}
-							}
 						]
-					});
+					})
 				}
 				else if ($('#hiddenDiv').is(':hidden')) {
 					$('#hiddenDiv').show();
@@ -142,25 +163,26 @@
 	</script>
 </head>
 <body>
+<div align="center">
 <a href="#end">Go to the end</a><br>
-<button type="button" id="showAll">Show all cars</button><br>
-<button type="button" id="showAllBackup">Show all cars (from backup)</button>
+<button class="normalButton" type="button" id="showAll"  style="margin-top: 20px">Show all cars</button><br>
+<button class="normalButton" type="button" id="showAllBackup">Show all cars (from backup)</button>
 <form>
 	Manufacturer: <input type="text" name="manufacturer"><br>
 	Model: <input type="text" name="model"><br>
-	<button type="button" id="postToDB">Add to DB</button>
-	<button type="button" id="searchByDriver">Search by driver</button>
+	<button class="normalButton" type="button" id="postToDB">Add to DB</button>
+	<button class="normalButton" type="button" id="searchByDriver">Search by driver</button>
 </form>
 <div id="hiddenDiv" hidden="true">
 Enter the driver name: <input type="text" id="driver">
-<button type="button" id="driverSearch">Go</button>
-<button type="button" id="hideThis">Hide</button>
+<button class="normalButton" type="button" id="driverSearch">Go</button>
+<button class="normalButton" type="button" id="hideThis">Hide</button>
 </div>
 <br>
 <br>
 <div id="result"></div><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 	<a name="end">This is the end</a><br>
-	<button type="button" id="clearDB">Clear DB (will be backed up)</button>
+	<button class="normalButton" type="button" id="clearDB">Clear DB (will be backed up)</button>
 	<a href="#top">Back to the top!</a>
 	<div id="dialogmsg" data-pageNum="1" title="Driver search" class="dialogdiv">
 		Here, you can search the name of a driver and see all the cars they drive.
@@ -168,5 +190,6 @@ Enter the driver name: <input type="text" id="driver">
 	<div data-pageNum="2" class="dialogdiv">When you click search after entering some text in the driver field, this script will make a call to a PHP script, looking in the database for cars with the driver you type.</div>
 	<div data-pageNum="3" class="dialogdiv">The contents will then be returned to you on this page, formatted in a table</div>
 	<div id=></div>
+</div>
 </body>
 </html>

@@ -21,8 +21,4 @@ while ($row = $result->fetch_assoc()) {
 $toHTML = $toHTML.'</table>';
 echo $toHTML;
 
-
-
-// 6 rows 5 columns
 ?>
-
